@@ -1,10 +1,10 @@
-import { createApp } from 'vue'
+import 'uno.css'
+
 import { createPinia } from 'pinia'
+import { createApp } from 'vue'
 
 import App from '@/App'
 import router from '@/router'
-
-import 'uno.css'
 
 const app = createApp(App)
 
