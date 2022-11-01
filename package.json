@@ -11,6 +11,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@ant-design-vue/pro-layout": "^3.2.3",
     "@formily/antdv-x3": "1.0.0-alpha.5",
     "@formily/core": "^2.2.10",
     "@formily/vue": "^2.2.10",

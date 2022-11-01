@@ -1,4 +1,6 @@
 import 'dayjs/locale/zh-cn'
+import 'ant-design-vue/lib/style/default.less'
+import '@ant-design-vue/pro-layout/dist/style.less'
 import 'uno.css'
 
 import { createPinia } from 'pinia'
