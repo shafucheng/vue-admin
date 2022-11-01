@@ -24,6 +24,11 @@ export default defineConfig({
           libDirectory: 'lib',
           style: (name) => `ant-design-vue/lib/${name}/style/index`,
         },
+        {
+          libName: '@formily/antdv-x3',
+          libDirectory: 'esm',
+          style: (name) => `@formily/antdv-x3/esm/${name}/style`,
+        },
       ],
     }),
   ],
