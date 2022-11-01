@@ -11,7 +11,6 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: routeNameBasicLayout,
-    meta: { title: 'System', flatMenu: true },
     component: () => import('@/layouts/BasicLayout'),
     children: [
       {

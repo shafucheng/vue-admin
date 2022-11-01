@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@ant-design-vue/pro-layout': ^3.2.3
+  '@ant-design/icons-vue': ^6.1.0
   '@formily/antdv-x3': 1.0.0-alpha.5
   '@formily/core': ^2.2.10
   '@formily/vue': ^2.2.10
@@ -33,6 +34,7 @@ specifiers:
 
 dependencies:
   '@ant-design-vue/pro-layout': 3.2.3
+  '@ant-design/icons-vue': 6.1.0_vue@3.2.41
   '@formily/antdv-x3': 1.0.0-alpha.5_l7r24p6nevbtlimqmqcwa3ouhu
   '@formily/core': 2.2.10
   '@formily/vue': 2.2.10_l7r24p6nevbtlimqmqcwa3ouhu
