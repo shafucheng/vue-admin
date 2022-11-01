@@ -1,3 +1,4 @@
+import 'dayjs/locale/zh-cn'
 import 'uno.css'
 
 import { createPinia } from 'pinia'
