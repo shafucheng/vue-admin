@@ -1,9 +1,21 @@
-import { HomeOutlined } from '@ant-design/icons-vue'
+import {
+  HomeOutlined,
+  LogoutOutlined,
+  UserOutlined,
+} from '@ant-design/icons-vue'
 import ProLayout, {
   clearMenuItem,
   getMenuData,
 } from '@ant-design-vue/pro-layout'
 import type { BreadcrumbRender } from '@ant-design-vue/pro-layout/dist/RenderTypings'
+import {
+  Avatar,
+  Dropdown,
+  Menu,
+  MenuDivider,
+  MenuItem,
+  Space,
+} from 'ant-design-vue'
 import { defineComponent, watchEffect } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 
@@ -58,6 +70,40 @@ export default defineComponent({
           >
             {{
               default: () => <RouterView />,
+              rightContentRender: () => (
+                <Dropdown>
+                  {{
+                    default: () => (
+                      <Avatar
+                        class={'cursor-pointer !bg-'}
+                        shape={'square'}
+                        size={'small'}
+                      >
+                        {{
+                          icon: () => <UserOutlined />,
+                        }}
+                      </Avatar>
+                    ),
+                    overlay: () => (
+                      <Menu>
+                        <MenuItem>
+                          <Space>
+                            <UserOutlined />
+                            Admin
+                          </Space>
+                        </MenuItem>
+                        <MenuDivider />
+                        <MenuItem>
+                          <Space>
+                            <LogoutOutlined />
+                            Logout
+                          </Space>
+                        </MenuItem>
+                      </Menu>
+                    ),
+                  }}
+                </Dropdown>
+              ),
               breadcrumbRender: (({ route, params, routes }) => {
                 const index = routes.indexOf(route)
                 if (index === 0) {
