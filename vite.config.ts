@@ -5,7 +5,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import unocss from 'unocss/vite'
 import { defineConfig } from 'vite'
 import eslint from 'vite-plugin-eslint'
-import imp from 'vite-plugin-imp'
+import { createStyleImportPlugin as styleImport } from 'vite-plugin-style-import'
 
 export default defineConfig({
   plugins: [
@@ -17,17 +17,21 @@ export default defineConfig({
     eslint({
       fix: true,
     }),
-    imp({
-      libList: [
+    styleImport({
+      libs: [
         {
-          libName: 'ant-design-vue',
-          libDirectory: 'lib',
-          style: (name) => `ant-design-vue/lib/${name}/style/index`,
+          libraryName: 'ant-design-vue',
+          resolveStyle: (name) => `ant-design-vue/es/${name}/style/index`,
+          ensureStyleFile: true,
         },
         {
-          libName: '@formily/antdv-x3',
-          libDirectory: 'esm',
-          style: (name) => `@formily/antdv-x3/esm/${name}/style`,
+          libraryName: '@formily/antdv-x3',
+          resolveStyle: (name) => `@formily/antdv-x3/esm/${name}/style`,
+          ensureStyleFile: true,
+        },
+        {
+          libraryName: '@ant-design-vue/pro-layout',
+          base: '@ant-design-vue/pro-layout/dist/style.less',
         },
       ],
     }),
@@ -35,6 +39,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'ant-design-vue/lib': 'ant-design-vue/es',
     },
   },
   css: {
