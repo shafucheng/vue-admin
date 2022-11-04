@@ -16,6 +16,7 @@
     "@formily/antdv-x3": "1.0.0-alpha.5",
     "@formily/core": "^2.2.10",
     "@formily/vue": "^2.2.10",
+    "@vueuse/core": "^9.4.0",
     "ant-design-vue": "^3.2.13",
     "dayjs": "^1.11.6",
     "pinia": "^2.0.23",
