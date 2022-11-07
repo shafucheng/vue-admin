@@ -10,11 +10,15 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    showPaddingBottom: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup: (props, { slots }) => {
     return () => {
       return (
-        <BlockContainer>
+        <BlockContainer class={{ 'pb-4': props.showPaddingBottom }}>
           <div class={'py-4 flex justify-between'}>
             <div
               class={
