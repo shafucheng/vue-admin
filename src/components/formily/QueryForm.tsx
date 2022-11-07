@@ -60,6 +60,7 @@ export default defineComponent({
                 class={{
                   hidden: collapsed && index > 0 && index > columns - 2,
                 }}
+                key={index}
               >
                 {item}
               </div>
