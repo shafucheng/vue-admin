@@ -13,7 +13,9 @@ export default defineConfig({
       reactivityTransform: true,
     }),
     vueJsx(),
-    unocss(),
+    unocss({
+      safelist: ['hidden'],
+    }),
     eslint({
       fix: true,
     }),
