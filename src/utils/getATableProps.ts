@@ -3,7 +3,7 @@ import type { TableColumnsType, TableProps } from 'ant-design-vue'
 export const getATableProps = (
   {
     columns = [],
-    dataSource = [{}],
+    dataSource = [],
     loading = false,
     page = 1,
     pageSize = 10,
