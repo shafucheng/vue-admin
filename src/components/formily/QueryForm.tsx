@@ -2,7 +2,7 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons-vue'
 import { FormItem, FormLayout, Submit } from '@formily/antdv-x3'
 import { useForm } from '@formily/vue'
 import { useElementSize } from '@vueuse/core'
-import { Button, Space, TypographyLink } from 'ant-design-vue'
+import { Button, Space, Typography } from 'ant-design-vue'
 import { defineComponent, ref, withModifiers } from 'vue'
 
 export default defineComponent({
@@ -91,7 +91,7 @@ export default defineComponent({
                   </Submit>
                 </Space>
                 {rows > 1 && (
-                  <TypographyLink onClick={withModifiers(toggle, ['prevent'])}>
+                  <Typography.Link onClick={withModifiers(toggle, ['prevent'])}>
                     {collapsed ? (
                       <>
                         展开
@@ -103,7 +103,7 @@ export default defineComponent({
                         <UpOutlined class={'ml-7px'} />
                       </>
                     )}
-                  </TypographyLink>
+                  </Typography.Link>
                 )}
               </Space>
             </FormItem>

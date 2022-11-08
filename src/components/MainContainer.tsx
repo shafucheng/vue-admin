@@ -1,4 +1,4 @@
-import { TypographyText } from 'ant-design-vue'
+import { Typography } from 'ant-design-vue'
 import { defineComponent } from 'vue'
 
 import BlockContainer from '@/components/BlockContainer'
@@ -25,7 +25,7 @@ export default defineComponent({
                 'h-8 flex items-center font-sans text-base font-medium leading-none'
               }
             >
-              <TypographyText>{props.title}</TypographyText>
+              <Typography.Text>{props.title}</Typography.Text>
             </div>
             {slots.action?.()}
           </div>

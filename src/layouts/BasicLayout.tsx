@@ -8,14 +8,7 @@ import ProLayout, {
   getMenuData,
 } from '@ant-design-vue/pro-layout'
 import type { BreadcrumbRender } from '@ant-design-vue/pro-layout/dist/RenderTypings'
-import {
-  Avatar,
-  Dropdown,
-  Menu,
-  MenuDivider,
-  MenuItem,
-  Space,
-} from 'ant-design-vue'
+import { Avatar, Dropdown, Menu, Space } from 'ant-design-vue'
 import { defineComponent, watchEffect } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 
@@ -86,19 +79,19 @@ export default defineComponent({
                     ),
                     overlay: () => (
                       <Menu>
-                        <MenuItem>
+                        <Menu.Item>
                           <Space>
                             <UserOutlined />
                             Admin
                           </Space>
-                        </MenuItem>
-                        <MenuDivider />
-                        <MenuItem>
+                        </Menu.Item>
+                        <Menu.Divider />
+                        <Menu.Item>
                           <Space>
                             <LogoutOutlined />
                             Logout
                           </Space>
-                        </MenuItem>
+                        </Menu.Item>
                       </Menu>
                     ),
                   }}
