@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 import { fileURLToPath, URL } from 'node:url'
 
 import vue from '@vitejs/plugin-vue'
@@ -7,7 +9,15 @@ import { defineConfig } from 'vite'
 import eslint from 'vite-plugin-eslint'
 import { createStyleImportPlugin as styleImport } from 'vite-plugin-style-import'
 
+const packageJson = JSON.parse(
+  readFileSync(path.resolve(__dirname, 'package.json'), 'utf-8'),
+)
+
 export default defineConfig({
+  define: {
+    __APP_NAME__: `"${packageJson.name}"`,
+    __APP_VERSION__: `"${packageJson.version}"`,
+  },
   plugins: [
     vue({
       reactivityTransform: true,

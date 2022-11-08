@@ -5,7 +5,10 @@ import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
 import App from '@/App'
+import config from '@/config'
 import router from '@/router'
+
+document.title = config.APP_TITLE
 
 const app = createApp(App)
 
