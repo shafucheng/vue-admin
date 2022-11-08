@@ -7,6 +7,9 @@ import { createApp } from 'vue'
 import App from '@/App'
 import config from '@/config'
 import router from '@/router'
+import { logSystemInfo } from '@/utils/logSystemInfo'
+
+logSystemInfo()
 
 document.title = config.APP_TITLE
 
