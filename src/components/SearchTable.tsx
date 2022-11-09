@@ -208,7 +208,11 @@ export default defineComponent({
             const _filters = _.fromPairs(
               _.toPairs(filters).map(([key, value]) => [
                 key,
-                _.isNil(value) ? undefined : value,
+                _.isNil(value) ||
+                (_.isArray(value) && value.length === 0) ||
+                (_.isObject(value) && _.isEmpty(value))
+                  ? undefined
+                  : value,
               ]),
             )
             const _sorter = (_.isArray(sorter) ? sorter : [sorter])
