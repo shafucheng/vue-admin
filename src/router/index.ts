@@ -23,6 +23,11 @@ const routes: RouteRecordRaw[] = [
         meta: { title: 'About' },
         component: () => import('@/views/AboutView'),
       },
+      {
+        path: 'search-table',
+        meta: { title: '查询表格' },
+        component: () => import('@/views/SearchTableView'),
+      },
     ],
   },
 ]
