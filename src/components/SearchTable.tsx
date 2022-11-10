@@ -4,9 +4,6 @@ import _ from 'lodash-es'
 import { type PropType, defineComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-const defaultCurrent = 1
-const defaultPageSize = 10
-
 export default defineComponent({
   name: 'SearchTable',
   props: {
@@ -53,6 +50,25 @@ export default defineComponent({
     const route = useRoute()
     const router = useRouter()
 
+    const withFiltersColumnKeys = $computed(() => {
+      return (
+        props.columns
+          ?.filter(
+            ({ dataIndex, key, filters }: any) => filters && (dataIndex ?? key),
+          )
+          .map(({ dataIndex, key }: any) => dataIndex ?? key) ?? []
+      )
+    })
+
+    const defaultCurrent = $computed(
+      () =>
+        (props.pagination ? props.pagination.defaultCurrent : undefined) ?? 1,
+    )
+    const defaultPageSize = $computed(
+      () =>
+        (props.pagination ? props.pagination.defaultPageSize : undefined) ?? 10,
+    )
+
     const queryCurrent = $computed(() => {
       const current = route.query[props.currentKey]
       try {
@@ -83,6 +99,21 @@ export default defineComponent({
         return defaultPageSize
       }
     })
+    const queryFilters = $computed(() => {
+      return _.fromPairs(
+        withFiltersColumnKeys.map((key) => {
+          const value = route.query[key]
+          try {
+            if (!_.isString(value)) {
+              throw ''
+            }
+            return [key, JSON.parse(value)]
+          } catch (err) {
+            return [key, undefined]
+          }
+        }),
+      )
+    })
     const querySorters = $computed(() => {
       const sorters = route.query[props.sortersKey]
       try {
@@ -106,6 +137,22 @@ export default defineComponent({
       }
     })
 
+    const emitChange = (
+      filters: any,
+      sorters: any,
+      current: number,
+      pageSize: number,
+    ) => {
+      emit('change', {
+        ...filters,
+        [props.sortersKey]: sorters,
+        [props.currentKey]: current,
+        [props.pageSizeKey]: pageSize,
+      })
+    }
+
+    emitChange(queryFilters, querySorters, queryCurrent, queryPageSize)
+
     const columns = $computed(() => {
       const sorters = _.fromPairs(
         querySorters.map(({ field, order }) => [field, order]),
@@ -117,17 +164,7 @@ export default defineComponent({
         return {
           ...item,
           sortOrder: sorters[field] ?? item.sortOrder,
-          filteredValue: (() => {
-            const _queryValue = route.query[field]
-            try {
-              if (!_.isString(_queryValue)) {
-                throw ''
-              }
-              return JSON.parse(_queryValue)
-            } catch (err) {
-              return []
-            }
-          })(),
+          filteredValue: queryFilters[field] ?? null,
         }
       })
     })
@@ -159,7 +196,7 @@ export default defineComponent({
               }
             })(),
           }}
-          rowKey={'id'}
+          rowKey={props.rowKey}
           rowSelection={{
             selectedRowKeys: props.selectedRowKeys,
             onChange: (selectedRowKeys) => {
@@ -189,16 +226,10 @@ export default defineComponent({
           pagination={
             props.pagination && {
               size: 'default',
-              current: queryCurrent,
-              pageSize: queryPageSize,
-              total: 100,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total: number) =>
-                `第 ${queryPageSize * (queryCurrent - 1) + 1}-${Math.min(
-                  queryPageSize * queryCurrent,
-                  100,
-                )} 条 / 总共 ${total} 条`,
+              showTotal: (total, range) =>
+                `第 ${range[0]}-${range[1]} 条 / 总共 ${total} 条`,
               ...props.pagination,
             }
           }
@@ -206,14 +237,22 @@ export default defineComponent({
             const _current = pagination.current!
             const _pageSize = pagination.pageSize!
             const _filters = _.fromPairs(
-              _.toPairs(filters).map(([key, value]) => [
-                key,
-                _.isNil(value) ||
-                (_.isArray(value) && value.length === 0) ||
-                (_.isObject(value) && _.isEmpty(value))
-                  ? undefined
-                  : value,
-              ]),
+              withFiltersColumnKeys.map((key) => {
+                const value = filters[key]
+                try {
+                  if (
+                    _.isNil(value) ||
+                    (_.isArray(value) && value.length === 0) ||
+                    (_.isObject(value) && _.isEmpty(value))
+                  ) {
+                    throw ''
+                  }
+                  JSON.stringify(value)
+                  return [key, value]
+                } catch (err) {
+                  return [key, undefined]
+                }
+              }),
             )
             const _sorter = (_.isArray(sorter) ? sorter : [sorter])
               .filter(
@@ -230,6 +269,7 @@ export default defineComponent({
                 field: field ?? columnKey,
                 order,
               }))
+            emitChange(_filters, _sorter, _current, _pageSize)
             router.replace({
               ...route,
               query: {
@@ -240,6 +280,8 @@ export default defineComponent({
                     JSON.stringify(value),
                   ]),
                 ),
+                [props.sortersKey]:
+                  _sorter.length === 0 ? undefined : JSON.stringify(_sorter),
                 [props.currentKey]:
                   _current === defaultCurrent
                     ? undefined
@@ -248,15 +290,7 @@ export default defineComponent({
                   _pageSize === defaultPageSize
                     ? undefined
                     : JSON.stringify(_pageSize),
-                [props.sortersKey]:
-                  _sorter.length === 0 ? undefined : JSON.stringify(_sorter),
               },
-            })
-            emit('change', {
-              ..._filters,
-              [props.currentKey]: _current,
-              [props.pageSizeKey]: _pageSize,
-              [props.sortersKey]: _sorter.length === 0 ? undefined : _sorter,
             })
           }}
         >
