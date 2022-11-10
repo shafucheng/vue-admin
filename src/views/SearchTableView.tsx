@@ -1,6 +1,7 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons-vue'
 import { PageContainer } from '@ant-design-vue/pro-layout'
 import { DatePicker, FormItem, Input, Select } from '@formily/antdv-x3'
+import { useAxios } from '@vueuse/integrations/useAxios'
 import {
   type TableColumnsType,
   Button,
@@ -9,7 +10,7 @@ import {
   Typography,
 } from 'ant-design-vue'
 import type { Key } from 'ant-design-vue/es/table/interface'
-import { defineComponent, watchEffect } from 'vue'
+import { defineComponent, onMounted, reactive, toRaw, watch } from 'vue'
 
 import QueryForm from '@/components/formily/QueryForm'
 import TableContainer from '@/components/MainContainer'
@@ -19,6 +20,7 @@ import SearchForm from '@/components/SearchForm'
 import SearchTable from '@/components/SearchTable'
 import TableActionSpace from '@/components/TableActionSpace'
 import { getSchemaFields } from '@/utils/getSchemaFields'
+import request from '@/utils/request'
 
 const searchSchema = {
   type: 'object',
@@ -34,21 +36,10 @@ const searchSchema = {
           type: 'string',
           title: 'Name',
           'x-decorator': 'FormItem',
-          'x-component': 'Select',
+          'x-component': 'Input',
           'x-component-props': {
-            placeholder: '请选择',
-            mode: 'multiple',
+            placeholder: '请输入',
           },
-          enum: [
-            {
-              label: 'Male',
-              value: 'male',
-            },
-            {
-              label: 'Female',
-              value: 'female',
-            },
-          ],
         },
         bbb: {
           type: 'string',
@@ -69,7 +60,7 @@ const searchSchema = {
           },
         },
         ddd: {
-          type: 'array',
+          type: 'string',
           title: 'DDD',
           'x-decorator': 'FormItem',
           'x-component': 'Select',
@@ -89,7 +80,7 @@ const searchSchema = {
           ],
         },
         '[startDate, endDate]': {
-          type: 'number',
+          type: 'string',
           title: 'EEE',
           'x-decorator': 'FormItem',
           'x-component': 'DatePicker.RangePicker',
@@ -124,17 +115,15 @@ const searchSchema = {
 const tableColumns: TableColumnsType = [
   {
     width: 100,
+    title: 'Index',
+    key: 'index',
+    fixed: 'left',
+  },
+  {
+    width: 100,
     title: 'Name',
     dataIndex: 'name',
     fixed: 'left',
-    filters: [
-      { text: 'Male', value: 'male' },
-      { text: 'Female', value: 'female' },
-    ],
-    sorter: {
-      multiple: 1,
-    },
-    // sortOrder: 'ascend',
   },
   ...Array.from({ length: 10 }).map((_, index) => {
     const realIndex = index + 1
@@ -142,10 +131,6 @@ const tableColumns: TableColumnsType = [
       width: 100,
       title: `Field ${realIndex}`,
       dataIndex: `field_${realIndex}`,
-      sorter: {
-        multiple: realIndex + 1,
-      },
-      // sortOrder: 'descend',
     }
   }),
   {
@@ -187,44 +172,40 @@ export default defineComponent({
     let queryValues = $ref({})
     let tableValues = $ref({})
 
-    const request = async (params: any, page: number, pageSize: number) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      return {
-        page,
-        pageSize,
-        total: 329,
-        list: Array.from({ length: pageSize }).map((_, index) => {
-          const id = pageSize * (page - 1) + index + 1
-          return {
-            id,
-            name: `Item ${id}`,
-          }
-        }),
-      }
+    const tableAxios = reactive(
+      useAxios<{
+        list: {
+          id: number
+          name: string
+        }[]
+        total: number
+        page: number
+        pageSize: number
+      }>(
+        '/tableData.json',
+        {
+          method: 'GET',
+        },
+        request,
+        { immediate: false },
+      ),
+    )
+
+    const tableAxiosExecute = () => {
+      tableAxios.execute({
+        params: {
+          ...toRaw(queryValues),
+          ...toRaw(tableValues),
+        },
+      })
     }
 
-    let loading = $ref(false)
-    let data = $ref<any>({
-      page: 0,
-      pageSize: 0,
-      total: 0,
-      list: [],
+    onMounted(() => {
+      watch(() => [queryValues, tableValues], tableAxiosExecute)
+      tableAxiosExecute()
     })
 
-    const run = async (
-      { page = 1, pageSize = 10, ...params } = {
-        ...queryValues,
-        ...tableValues,
-      },
-    ) => {
-      loading = true
-      data = await request(params, page, pageSize)
-      loading = false
-    }
     const tableSelectedRowKeys = $ref<Key[]>([])
-    watchEffect(() => {
-      console.log($$(tableSelectedRowKeys))
-    })
 
     return () => {
       return (
@@ -234,7 +215,6 @@ export default defineComponent({
               querySyncFields={getSchemaFields(searchSchema)}
               onSubmit={(values) => {
                 queryValues = values
-                run()
               }}
             >
               {{
@@ -256,7 +236,7 @@ export default defineComponent({
           </SearchContainer>
           <TableContainer
             title={'表格'}
-            showPaddingBottom={!(data.list?.length > 0)}
+            showPaddingBottom={!tableAxios.data?.list.length}
           >
             {{
               action: () => (
@@ -270,22 +250,28 @@ export default defineComponent({
               default: () => (
                 <SearchTable
                   columns={tableColumns}
-                  dataSource={data.list}
-                  loading={loading}
+                  dataSource={tableAxios.data?.list}
+                  loading={tableAxios.isLoading}
                   pagination={{
-                    current: data.page,
-                    pageSize: data.pageSize,
-                    total: data.total,
+                    current: tableAxios.data?.page,
+                    pageSize: tableAxios.data?.pageSize,
+                    total: tableAxios.data?.total,
                   }}
                   v-model={[tableSelectedRowKeys, 'selectedRowKeys']}
                   onChange={(params) => {
                     tableValues = params
-                    run()
                   }}
                 >
                   {{
-                    bodyCell: ({ column, text }: any) => {
+                    bodyCell: ({ column, text, index }: any) => {
                       switch (column.key) {
+                        case 'index':
+                          return `${
+                            tableAxios.data?.pageSize! *
+                              (tableAxios.data?.page! - 1) +
+                            index +
+                            1
+                          }`
                         case 'action':
                           return (
                             <TableActionSpace>
