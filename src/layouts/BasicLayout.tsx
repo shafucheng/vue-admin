@@ -54,7 +54,6 @@ export default defineComponent({
             title={'Vue Admin'}
             navTheme={'realDark'}
             layout={'mix'}
-            fixedHeader={true}
             fixSiderbar={true}
             menuData={menuData}
             breadcrumb={{

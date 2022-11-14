@@ -6,7 +6,7 @@ export default defineComponent({
   setup: () => {
     return () => {
       return (
-        <PageContainer fixedHeader={true}>
+        <PageContainer>
           <div>About</div>
         </PageContainer>
       )

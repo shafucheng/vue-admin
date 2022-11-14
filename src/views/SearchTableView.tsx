@@ -209,7 +209,7 @@ export default defineComponent({
 
     return () => {
       return (
-        <PageContainer fixedHeader={true}>
+        <PageContainer>
           <SearchContainer>
             <SearchForm
               querySyncFields={getSchemaFields(searchSchema)}
