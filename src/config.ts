@@ -7,7 +7,8 @@ interface Config {
 
 const config: Config = {
   APP_TITLE: import.meta.env.VITE_APP_TITLE ?? '',
-  APP_BASEURL: import.meta.env.VITE_APP_BASEURL ?? '',
+  APP_BASEURL: new URL(import.meta.env.VITE_APP_BASEURL || '/', location.href)
+    .href,
 }
 
 const windowConfig =
