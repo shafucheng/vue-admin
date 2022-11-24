@@ -12,6 +12,7 @@ import { Avatar, Dropdown, Menu, Space } from 'ant-design-vue'
 import { defineComponent, watchEffect } from 'vue'
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 
+import config from '@/config'
 import { routeNameBasicLayout } from '@/router'
 
 export default defineComponent({
@@ -51,7 +52,7 @@ export default defineComponent({
               [openKeys, 'openKeys'],
             ]}
             logo={null}
-            title={'Vue Admin'}
+            title={config.APP_TITLE}
             navTheme={'realDark'}
             layout={'mix'}
             fixSiderbar={true}
